@@ -9,10 +9,10 @@
 	 */
 	function shortenLink($url) {
 	
-		$url = isset($_GET['url']) ? urldecode(trim($_GET['url'])) : '';
+		$url = isset($_GET['url']) ? urldecode(trim($_GET['url'])) : "";
 		
 		if (!filter_var($url, FILTER_VALIDATE_URL)) {
-		    die('Enter a URL.');  
+		    die('Please enter a valid URL.');  
 		} 
 		
 	    $db = new MySQLi(mysql_host, mysql_user, mysql_password, mysql_db);
@@ -24,11 +24,11 @@
 		$db->set_charset('utf8');
 		
 		$url = $db->real_escape_string($url);
-		$result = $db->query('SELECT short_url FROM shortener WHERE real_url = "' . $url . '" LIMIT 1');
+		$res = $db->query('SELECT short_url FROM shortener WHERE real_url = "' . $url . '" LIMIT 1');
 		
 		// Let's check if it's already been shortened
-		if ($result && $result->num_rows > 0) { 
-			$existing = $result->fetch_object()->short_url;
+		if ($res && $res->num_rows > 0) { 
+			$existing = $res->fetch_object()->short_url;
 
 			echo $url . " has already been shortened to: " . domain."/".$existing;
 			exit();
@@ -50,6 +50,7 @@
 
        	$db->close();
 	}
+
 
 
 	/** 
@@ -83,5 +84,33 @@
 	    $rows = $res->fetch_array();
 	    
 	    return  $rows[0] === 1;
+	}
+
+
+	/**
+	 * getVisits(): returns number of visits
+	 * 
+	 * @param string $short
+	 * @return int (-1 if doesn't exist)
+	 */
+	function getVisits($short) {
+		$visits = -1;
+
+	    $db = new MySQLi(mysql_host, mysql_user, mysql_password, mysql_db);
+		if ($db->connect_errno) {
+		    printf("Connect failed: %s\n", $db->connect_error);
+		    exit();
+		}
+	    
+	    $db->set_charset('utf8');
+	    	    
+	    // query for redir link
+	    $redirRes = $db->query('SELECT real_url FROM shortener WHERE short_url = "' . $short . '"');
+	    
+	    if ($redirRes && $redirRes->num_rows > 0) {
+	        $visits = $redirRes->fetch_object()->visits;
+	    }
+
+	    return $visits;
 	}
 ?>

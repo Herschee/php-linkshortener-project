@@ -50,6 +50,17 @@
 
 		echo shortenLink($_GET['url']);
 
+	} else if (isset($_GET['ext'] && isset($_GET['stats']))) {
+
+		if ($_GET['stats'] == 'visits') {
+			$visits = getVisits($_GET['ext']);
+
+			if ($visits >= 0) {
+				echo "This link has been visited " . $visits . " times!";
+			} else {
+				echo "This shortlink does not exist!";
+			}
+		}
 
 	} else {
 		// 
