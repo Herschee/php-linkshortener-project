@@ -1,7 +1,7 @@
 <?php 
 	// - MARK: index.php
 	// Author: Henry Wrightman
-	// URL Shortner - WonderfulLife Project
+	// URL Shortner
 
 	require 'config.php';
 	require 'lib.php';
